@@ -9,7 +9,7 @@
 
 [![BLOG](https://img.shields.io/badge/Blog-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white)](https://www.yunjuetech.com/en)
 [![GITHUB](https://img.shields.io/badge/Github-24292F?style=for-the-badge&logo=github&logoColor=white)](https://github.com/YunjueTech/Yunjue-Agent)
-[![Paper](https://img.shields.io/badge/Paper-De2c33?style=for-the-badge&logo=adobe-acrobat-reader&logoColor=white)](tech_report/YunjueAgentTechReport.pdf)
+[![Paper](https://img.shields.io/badge/Paper-De2c33?style=for-the-badge&logo=adobe-acrobat-reader&logoColor=white)](https://arxiv.org/abs/2601.18226)
 
 </div>
 
@@ -22,13 +22,13 @@
 
 ---
 
-This repo is an official implementation of Yunjue Agent by Yunjue Technology. Our company is a cutting-edge technology company dedicated to building Self-Evolving AGI (Artificial General Intelligence) and wearable devices. We are a group of tireless explorers, with members from top AI laboratories and engineering teams. We are not satisfied with "static" large models—those parameter matrices frozen at the moment of training completion. We believe that true intelligence lies not in how much past knowledge is stored, but in the ability to adapt, learn, and create tools when facing an unknown future. 
+This repo is an official implementation of Yunjue Agent by Yunjue Technology. Our company is a cutting-edge technology company dedicated to building Self-Evolving AGI (Artificial General Intelligence) and wearable devices. We are a group of tireless explorers, with members from top AI laboratories and engineering teams. We are not satisfied with "static" large models—those with parameter matrices frozen after training completion. We believe that true intelligence lies not only in how much past knowledge is stored, but in the ability to adapt, learn, and create tools when facing an unknown future.
 
 We welcome connections of all kinds. For financing inquiries, technical exchanges, or to join our team, please contact qiweizhen@yunjuetech.com
 
 ## 📰 News & Updates
 
-- **[2026-01-26]** 🎉 **Initial Release**: We have open-sourced the **Yunjue Agent** framework!
+- **[2026-01-26]** 🎉 **Initial Release**: We have open-sourced the **Yunjue Agent** system!
 - **[Expected: 2026-01-31]** 🔜 **Data Release**: We are scheduling the release of **full traces for the five benchmark datasets.**
 - **[Expected: 2026-01-31]** ✨ **Clean Version Release**: We will release a **cleaned, easy-to-use version** of the codebase for better accessibility and integration.
 
@@ -62,7 +62,6 @@ cp conf.yaml.example conf.yaml
 source .venv/bin/activate
 
 ./scripts/evolve.sh --dataset DEEPSEARCHQA --run_name test --batch_size 1 --start 0
-
 ```
 
 🎉 **Expected Output:** Your agent will start completing questions from DeepSearchQA. You can view the corresponding logs in `output/test` 😊

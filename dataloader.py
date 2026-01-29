@@ -3,6 +3,7 @@ import json
 import re
 from pathlib import Path
 from typing import Iterator
+import os
 
 
 def load_hle_dataset(batch_size: int) -> Iterator[dict]:
@@ -16,6 +17,7 @@ def load_hle_dataset(batch_size: int) -> Iterator[dict]:
             continue
         if image := item.get("image", None):
             images_dir = Path(__file__).parent / "dataset" / "HLE" / "images"
+            os.makedirs(images_dir, exist_ok=True)
             matching_files = list(images_dir.glob(f"{item['id']}.*"))
             if matching_files:
                 image_path = matching_files[0] 

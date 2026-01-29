@@ -13,6 +13,13 @@
 
 </div>
 
+<div align="center">
+
+### [English](README.md)｜[中文](README_zh.md)
+
+</div>
+
+
 ---
 
 This repo is an official implementation of Yunjue Agent by Yunjue Technology. Our company is a cutting-edge technology company dedicated to building Self-Evolving AGI (Artificial General Intelligence) and wearable devices. We are a group of tireless explorers, with members from top AI laboratories and engineering teams. We are not satisfied with "static" large models—those parameter matrices frozen at the moment of training completion. We believe that true intelligence lies not in how much past knowledge is stored, but in the ability to adapt, learn, and create tools when facing an unknown future. 

@@ -9,6 +9,7 @@
 [![BLOG](https://img.shields.io/badge/Blog-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white)](https://www.yunjuetech.com/en)
 [![GITHUB](https://img.shields.io/badge/Github-24292F?style=for-the-badge&logo=github&logoColor=white)](https://github.com/YunjueTech/Yunjue-Agent)
 [![Paper](https://img.shields.io/badge/Paper-De2c33?style=for-the-badge&logo=adobe-acrobat-reader&logoColor=white)](tech_report/YunjueAgentTechReport.pdf)
+[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-blue?style=for-the-badge)](https://huggingface.co/datasets/YunjueTech/Yunjue-Agent-Traces)
 
 </div>
 
@@ -88,6 +89,7 @@ source .venv/bin/activate
 - **关键脚本**：
   - `scripts/evolve.sh`：运行进化流程，生成 `output/<RUN_NAME>/` 下的预测结果。
   - `scripts/evaluate.py`：对运行结果进行评测（例如 `uv run scripts/evaluate.py --benchmark ... --predictions ...`）。
+- **系统轨迹**：我们在 [Hugging Face](https://huggingface.co/datasets/YunjueTech/Yunjue-Agent-Traces) 上提供了完整的系统轨迹供分析。
 
 ---
 

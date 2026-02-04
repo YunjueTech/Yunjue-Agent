@@ -29,7 +29,7 @@ We welcome connections of all kinds. For financing inquiries, technical exchange
 ## 📰 News & Updates
 
 - **[2026-01-26]** 🎉 **Initial Release**: We have open-sourced the **Yunjue Agent** system!
-- **[2026-01-31]** 📦 **Data Release**: We released the system logs under **zero-start settings** for five benchmark datasets (**HLE**, **DeepSearchQA**, **FinSearchComp (T2&T3)**, **xbench-ScienceQA** and **xbench-DeepSearch**): [Google Drive](https://drive.google.com/drive/folders/1mL5PqKZwOUVIP-UYg0bZr11fotpZmcqb?usp=sharing). [Huggingface Dataset for one line code analysis]([https://github.com/YunjueTech/Yunjue-Agent/issues/2](https://huggingface.co/datasets/YunjueTech/Yunjue-Agent-Traces)).
+- **[2026-01-31]** 📦 **Data Release**: We released the system logs under **zero-start settings** for five benchmark datasets (**HLE**, **DeepSearchQA**, **FinSearchComp (T2&T3)**, **xbench-ScienceQA** and **xbench-DeepSearch**): [Google Drive](https://drive.google.com/drive/folders/1mL5PqKZwOUVIP-UYg0bZr11fotpZmcqb?usp=sharing). New: [Huggingface Dataset for one line code analysis](https://huggingface.co/datasets/YunjueTech/Yunjue-Agent-Traces).
 - **[2026-01-31]** ✨ **Reproduction & Evaluation Update**: We organized the evaluation script and reproduction workflow (see [Reproducing & evaluating results](#-reproducing--evaluating-results) below).
 - **[Expected: 2026-02-08]** 📄 **Tech Report Update**: We will release an updated tech report featuring comprehensive technical details and deeper analysis.
 - **[Expected: Around Lunar New Year(TBD)]**: An online demo works like Manus / Deep Research.

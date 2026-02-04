@@ -139,6 +139,12 @@ source .venv/bin/activate
 
 ---
 
+## Star 趋势
+
+[![Star History Chart](https://api.star-history.com/svg?repos=YunjueTech/Yunjue-Agent&type=date&legend=top-left)](https://www.star-history.com/)
+
+---
+
 ## 📄 许可证
 
 本项目采用 Apache License 2.0 许可证。

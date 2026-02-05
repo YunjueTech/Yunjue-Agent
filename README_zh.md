@@ -9,6 +9,7 @@
 [![BLOG](https://img.shields.io/badge/Blog-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white)](https://www.yunjuetech.com/en)
 [![GITHUB](https://img.shields.io/badge/Github-24292F?style=for-the-badge&logo=github&logoColor=white)](https://github.com/YunjueTech/Yunjue-Agent)
 [![Paper](https://img.shields.io/badge/Paper-De2c33?style=for-the-badge&logo=adobe-acrobat-reader&logoColor=white)](tech_report/YunjueAgentTechReport.pdf)
+[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-blue?style=for-the-badge)](https://huggingface.co/datasets/YunjueTech/Yunjue-Agent-Traces)
 
 </div>
 
@@ -33,9 +34,11 @@
 ## 📰 新闻与动态
 
 * **[2026-01-26]** 🎉 **首次发布**：我们开源了 **Yunjue Agent** 框架！
-* **[2026-01-31]** 🔜 **数据发布**：我们发布了在 **5 个数据集**（**HLE**, **DeepSearchQA**, **FinSearchComp (T2&T3)**, **xbench-ScienceQA** 和 **xbench-DeepSearch**）**zero-start settings** 下的系统日志：[Google Drive](https://drive.google.com/drive/folders/1mL5PqKZwOUVIP-UYg0bZr11fotpZmcqb?usp=sharing)。
-* **[2026-01-31]** ✨ **复现与评测更新**：我们整理了评测脚本与复现流程（见下方 [复现与评测](#复现与评测) 小节）。
+* **[2026-01-31]** 📦 **数据发布**：我们发布了在 **5 个数据集**（**HLE**, **DeepSearchQA**, **FinSearchComp (T2&T3)**, **xbench-ScienceQA** 和 **xbench-DeepSearch**）**zero-start settings** 下的系统日志：[Google Drive](https://drive.google.com/drive/folders/1mL5PqKZwOUVIP-UYg0bZr11fotpZmcqb?usp=sharing)。新增访问方式：[Huggingface Dataset](https://huggingface.co/datasets/YunjueTech/Yunjue-Agent-Traces)支持一键导入执行轨迹分析。
+* **[2026-01-31]** ✨ **复现与评测更新**：我们整理了评测脚本与复现流程（见下方 [复现与评测](#-复现与评测) 小节）。
 * **[预计: 2026-02-08]** 📄 **技术报告更新**: 我们将更新技术报告，包含更多技术细节与更深度的数据分析。
+* **[预计: 春节附近（不确定，可能迟延）]** 类似于Manus和Deep Research的Web Demo。
+
 
 > **⚠️ 关于当前版本的说明**：当前代码库是基于我们研究实验重构的初始版本。虽然我们已经验证了核心逻辑，但在复现过程中可能会遇到少量 Bug 或边缘情况。我们正在持续清理代码，欢迎提交 Issue 或 PR！
 
@@ -86,6 +89,7 @@ source .venv/bin/activate
 - **关键脚本**：
   - `scripts/evolve.sh`：运行进化流程，生成 `output/<RUN_NAME>/` 下的预测结果。
   - `scripts/evaluate.py`：对运行结果进行评测（例如 `uv run scripts/evaluate.py --benchmark ... --predictions ...`）。
+- **系统轨迹**：我们在 [Hugging Face](https://huggingface.co/datasets/YunjueTech/Yunjue-Agent-Traces) 上提供了完整的系统轨迹供分析。
 
 ---
 
@@ -132,6 +136,12 @@ source .venv/bin/activate
 我们在 **HLE**、**DeepSearchQA**、**FinSearchComp (T2&T3)**、**xbench-ScienceQA** 和 **xbench-DeepSearch** 等一系列基准测试中对 Yunjue Agent 进行了评测，并取得了 SOTA 结果。
 
 <img width="100%" alt="主要结果图表" src="docs/assets/main_results.jpeg" />
+
+---
+
+## Star 趋势
+
+[![Star History Chart](https://api.star-history.com/svg?repos=YunjueTech/Yunjue-Agent&type=date&legend=top-left)](https://www.star-history.com/)
 
 ---
 

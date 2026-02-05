@@ -10,6 +10,7 @@
 [![BLOG](https://img.shields.io/badge/Blog-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white)](https://www.yunjuetech.com/en)
 [![GITHUB](https://img.shields.io/badge/Github-24292F?style=for-the-badge&logo=github&logoColor=white)](https://github.com/YunjueTech/Yunjue-Agent)
 [![Paper](https://img.shields.io/badge/Paper-De2c33?style=for-the-badge&logo=adobe-acrobat-reader&logoColor=white)](https://arxiv.org/abs/2601.18226)
+[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-blue?style=for-the-badge)](https://huggingface.co/datasets/YunjueTech/Yunjue-Agent-Traces)
 
 </div>
 
@@ -29,9 +30,10 @@ We welcome connections of all kinds. For financing inquiries, technical exchange
 ## 📰 News & Updates
 
 - **[2026-01-26]** 🎉 **Initial Release**: We have open-sourced the **Yunjue Agent** system!
-- **[2026-01-31]** 🔜 **Data Release**: We released the system logs under **zero-start settings** for five benchmark datasets (**HLE**, **DeepSearchQA**, **FinSearchComp (T2&T3)**, **xbench-ScienceQA** and **xbench-DeepSearch**): [Google Drive](https://drive.google.com/drive/folders/1mL5PqKZwOUVIP-UYg0bZr11fotpZmcqb?usp=sharing).
-- **[2026-01-31]** ✨ **Reproduction & Evaluation Update**: We organized the evaluation script and reproduction workflow (see [Reproducing & evaluating results](#reproducing--evaluating-results) below).
+- **[2026-01-31]** 📦 **Data Release**: We released the system logs under **zero-start settings** for five benchmark datasets (**HLE**, **DeepSearchQA**, **FinSearchComp (T2&T3)**, **xbench-ScienceQA** and **xbench-DeepSearch**): [Google Drive](https://drive.google.com/drive/folders/1mL5PqKZwOUVIP-UYg0bZr11fotpZmcqb?usp=sharing). New: [Huggingface Dataset for one line code analysis](https://huggingface.co/datasets/YunjueTech/Yunjue-Agent-Traces).
+- **[2026-01-31]** ✨ **Reproduction & Evaluation Update**: We organized the evaluation script and reproduction workflow (see [Reproducing & evaluating results](#-reproducing--evaluating-results) below).
 - **[Expected: 2026-02-08]** 📄 **Tech Report Update**: We will release an updated tech report featuring comprehensive technical details and deeper analysis.
+- **[Expected: Around Lunar New Year(TBD)]**: An online demo works like Manus / Deep Research.
 
 > **⚠️ Note on Current Release**: The current codebase is an initial release refactored from our research experiments. While we have verified the core logic, there might be minor bugs or edge cases during reproduction. We are continuously cleaning up the code and welcome any issues or PRs!
 ---
@@ -80,6 +82,7 @@ source .venv/bin/activate
 - **Main scripts**:
   - `scripts/evolve.sh`: run the evolution loop to generate predictions under `output/<RUN_NAME>/`.
   - `scripts/evaluate.py`: evaluate a run (e.g., `uv run scripts/evaluate.py --benchmark ... --predictions ...`).
+- **System Traces**: We provide full system traces on [Hugging Face](https://huggingface.co/datasets/YunjueTech/Yunjue-Agent-Traces) for analysis.
 
 ---
 
@@ -149,6 +152,12 @@ If you find this work useful, please cite:
       url={https://arxiv.org/abs/2601.18226}, 
 }
 ```
+
+---
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=YunjueTech/Yunjue-Agent&type=date&legend=top-left)](https://www.star-history.com/#YunjueTech/Yunjue-Agent&type=date&legend=top-left)
 
 ---
 

@@ -38,6 +38,54 @@ def count_unique_tools(tools_dir: str) -> int:
 
 logger = logging.getLogger(__name__)
 
+TRAIN_STATE_FILENAME = "train_state.json"
+
+
+def checkpoint_dir(run_dir: Path, step: int) -> Path:
+    return Path(run_dir) / "checkpoints" / f"checkpoint_{step}"
+
+
+def save_train_state(
+    run_dir: Path, step: int, total_tool_call_cnt: int, total_needed_tool_cnt: int
+) -> None:
+    """
+    Save counters into {run_dir}/checkpoints/checkpoint_{step}/train_state.json.
+    Uses atomic replace to avoid partial writes.
+    """
+    ckpt_dir = checkpoint_dir(run_dir, step)
+    ckpt_dir.mkdir(parents=True, exist_ok=True)
+
+    state_path = ckpt_dir / TRAIN_STATE_FILENAME
+    tmp_path = ckpt_dir / f".{TRAIN_STATE_FILENAME}.tmp"
+    state = {
+        "total_tool_call_cnt": int(total_tool_call_cnt),
+        "total_needed_tool_cnt": int(total_needed_tool_cnt),
+    }
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        json.dump(state, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+    os.replace(tmp_path, state_path)
+
+
+def load_train_state(run_dir: Path, step: int) -> tuple[int, int] | None:
+    """
+    Load counters from {run_dir}/checkpoints/checkpoint_{step}/train_state.json.
+    Returns (total_tool_call_cnt, total_needed_tool_cnt), or None if not available.
+    """
+    ckpt_dir = checkpoint_dir(run_dir, step)
+    if not ckpt_dir.exists():
+        return None
+    state_path = ckpt_dir / TRAIN_STATE_FILENAME
+    if not state_path.exists():
+        return None
+    try:
+        with open(state_path, "r", encoding="utf-8") as f:
+            state = json.load(f)
+        return int(state.get("total_tool_call_cnt", 0)), int(state.get("total_needed_tool_cnt", 0))
+    except Exception as e:
+        logger.warning(f"Failed to load train state from {state_path}: {e}")
+        return None
+
 
 class ToolCluster(BaseModel):
     suggested_master_tool_name: str = Field(..., description="Consolidated cluster name")
@@ -272,6 +320,11 @@ async def optimize_tools(task_ids: List[str], step: int, run_dir: Path, merge_po
 
     return True
 
+def compute_loss(new_tool_call_cnt, total_tool_call_cnt, new_needed_tool_cnt, total_needed_tool_cnt):
+    total_tool_call_cnt += new_tool_call_cnt
+    total_needed_tool_cnt += new_needed_tool_cnt
+    return total_needed_tool_cnt / total_tool_call_cnt
+
 
 def run_task_process(
     query: str,
@@ -311,6 +364,17 @@ async def train(
     manager = multiprocessing.Manager()
     step = 0
     total_queries = 0
+    total_tool_call_cnt = 0
+    total_needed_tool_cnt = 0
+    if start > 0:
+        resume_step = start - 1
+        restored = load_train_state(run_dir, resume_step)
+        if restored is not None:
+            total_tool_call_cnt, total_needed_tool_cnt = restored
+            logger.info(
+                f"Restored counters from checkpoint_{resume_step}: "
+                f"total_tool_call_cnt={total_tool_call_cnt}, total_needed_tool_cnt={total_needed_tool_cnt}"
+            )
     try:
         for data in data_iter:
             data_items = data["data_items"]
@@ -346,7 +410,7 @@ async def train(
                             try:
                                 results[idx] = async_jobs[idx].get()
                             except Exception as e:
-                                results[idx] = {"error": str(e), "task_id": task_ids[idx]}
+                                results[idx] = {"error": str(e), "task_id": task_ids[idx]}, 0
                             done_now.append(idx)
                     for idx in done_now:
                         pending.discard(idx)
@@ -357,7 +421,7 @@ async def train(
                 timed_out_task_ids: set[str] = set()
 
                 for idx in pending:
-                    results[idx] = {"error": f"Timeout after {timeout} seconds", "task_id": task_ids[idx]}
+                    results[idx] = {"error": f"Timeout after {timeout} seconds", "task_id": task_ids[idx]}, 0
                     timed_out_task_ids.add(task_ids[idx])
 
                 if pending:
@@ -370,7 +434,7 @@ async def train(
                 pool.join()
             # Also drop tools for tasks that timed out inside the worker.
             for idx, result in enumerate(results):
-                result_payload = result
+                result_payload = result[0]
                 if isinstance(result_payload, dict):
                     err = result_payload.get("error", "")
                     if isinstance(err, str) and "Timeout" in err:
@@ -378,6 +442,7 @@ async def train(
             for task_id in timed_out_task_ids:
                 private_tool_dir = Path(run_dir) / "private_dynamic_tools" / f"dynamic_tools_{task_id}"
                 shutil.rmtree(private_tool_dir, ignore_errors=True)
+            state_should_save = False
             try:
 
                 with open(prediction_file, "a", encoding="utf-8") as f:
@@ -385,14 +450,32 @@ async def train(
                         result = {
                             "question_index": data_items[idx]["task_id"],
                             "question": data_items[idx]["query"],
-                            "prediction": result,
+                            "prediction": result[0],
                         }
                         f.write(json.dumps(result, ensure_ascii=False) + "\n")
                 active_task_ids = [task_id for task_id in task_ids if task_id not in timed_out_task_ids]
+                new_tool_call_cnt = sum([result[1] for result in results])
+                dynamic_tools_dirs = [f"{run_dir}/private_dynamic_tools/dynamic_tools_{task_id}" for task_id in active_task_ids]
+                dynamic_tools_files = [
+                    file for dynamic_tools_dir in dynamic_tools_dirs for file in Path(dynamic_tools_dir).glob("*.py")
+                ]
+                new_needed_tool_cnt = len(dynamic_tools_files)
+                egl = compute_loss(new_tool_call_cnt, total_tool_call_cnt, new_needed_tool_cnt, total_needed_tool_cnt)
+                total_tool_call_cnt += new_tool_call_cnt
+                total_needed_tool_cnt += new_needed_tool_cnt
+                state_should_save = True
+                logger.info(f"Step: {step}, EGL: {egl}, Total tool call cnt: {total_tool_call_cnt}, Total needed tool cnt: {total_needed_tool_cnt}")
+
                 await optimize_tools(active_task_ids, step, run_dir, merge_policy)
             except Exception as e:
                 logger.error(f"Error processing data: {e}")
                 logger.error(f"Traceback:\n{traceback.format_exc()}")
+            finally:
+                if state_should_save:
+                    try:
+                        save_train_state(run_dir, step, total_tool_call_cnt, total_needed_tool_cnt)
+                    except Exception as e:
+                        logger.warning(f"Failed to save train state for step {step}: {e}")
 
             total_queries += len(data_items)
 

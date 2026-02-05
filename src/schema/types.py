@@ -67,9 +67,10 @@ class State(MessagesState):
 
 
     input_model_error_tools: List[ToolExecutionRecord] = []
-    current_successful_tools: List[ToolExecutionRecord] = []
-    new_tool_executions: List[ToolExecutionRecord] = []
     required_tool_names: List[str] = []
     execution_res: str = ""
     worker_exist_messages: List[BaseMessage] = []
     recur_limit_exceeded: bool = False
+
+    # for loss
+    cumulative_tool_call_cnt: int = 0

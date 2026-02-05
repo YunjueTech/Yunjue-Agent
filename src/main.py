@@ -79,7 +79,8 @@ async def run_task(
                 "thread_id": task_id,
                 "dynamic_tools_dir": f"{run_dir}/private_dynamic_tools/dynamic_tools_{task_id}",
                 "dynamic_tools_public_dir": f"{run_dir}/dynamic_tools_public",
-            }
+            },
+            "recursion_limit": 1000
         }
 
         # Ensure dynamic tools directories exist
@@ -94,10 +95,10 @@ async def run_task(
         for file in private_dynamic_tools_files:
             if os.path.basename(file).split(".")[0] not in success_tool_names:
                 os.remove(file)
-        return final_state["final_answer"]
+        return final_state["final_answer"], final_state["cumulative_tool_call_cnt"]
     except Exception as e:
         logger.error(f"Error in the task: {e}", exc_info=True)
-        return "['Error in the task']"
+        return "['Error in the task']", 0
     finally:
         root_logger.removeHandler(file_handler)
         file_handler.close()

@@ -91,7 +91,7 @@ async def integrator_node(state: State, config: RunnableConfig):
 
     logger.info(f"{template_name} response: {response_content}")
 
-    return {"final_answer": response_content}
+    return {"final_answer": response_content, "cumulative_tool_call_cnt": state.get("cumulative_tool_call_cnt", 0)}
 
 
 async def manager_node(
@@ -116,7 +116,6 @@ async def manager_node(
     pending_responses = state.get("pending_step_response", "")
     context_summary = task_execution_context.context_summary
     analyze_tasks = []
-    success_tools = state.get("current_successful_tools", [])
 
     user_query = state.get("user_query", "")
     failure_report = ""
@@ -145,7 +144,6 @@ async def manager_node(
                 update={
                     "task_execution_context": task_execution_context,
                     "pending_step_response": "",
-                    "current_successful_tools": [],
                     "execution_res": pending_responses,
                 },
                 goto="integrator",  
@@ -163,7 +161,6 @@ async def manager_node(
                     update={
                         "task_execution_context": task_execution_context,
                         "pending_step_response": "",
-                        "current_successful_tools": [],
                         "execution_res": execution_res,
                     },
                     goto="integrator",
@@ -172,7 +169,6 @@ async def manager_node(
             failure_report = suggestions
             update_payload = {
                 "pending_step_response": "",
-                "current_successful_tools": [],
                 "task_failure_report": failure_report,
             }
 
@@ -194,7 +190,6 @@ async def manager_node(
         "task_execution_context": task_execution_context,
         "required_tool_names": required_tool_names,
         "pending_tool_requests": tool_requests,
-        "current_successful_tools": [],
         "tool_usage_guidance": tool_usage_guidance,
     }
 
@@ -431,11 +426,14 @@ async def executor_node(
     # Use stream to handle recursion limit and collect all messages
     all_messages = []
     recur_limit_exceeded = False
+    final_state = None
     try:
         async for stream_state in agent.astream(
             {"messages": agent_input["messages"]},
             stream_mode="values",
+            config={"recursion_limit": 1000}
         ):
+            final_state = stream_state
             if isinstance(stream_state, dict):
                 # Check if tool_steps has reached max_steps to detect recur limit exceeded
                 tool_steps = stream_state.get("tool_steps", 0)
@@ -449,6 +447,8 @@ async def executor_node(
         logger.error(f"Error during agent stream execution: {e}")
         # Fallback to exception-based detection if stream_state doesn't contain tool_steps
         recur_limit_exceeded = True
+    
+    tool_call_cnt = final_state.get("tool_call_cnt", 0)
     last_message = all_messages[-1]
 
     context_summary = ""
@@ -461,7 +461,6 @@ async def executor_node(
         elif isinstance(message, AIMessage) or isinstance(message, ToolMessage):
             new_messages.append(message)
     new_tool_executions = extract_tool_calls_from_messages(new_messages)
-    current_successful_tools = new_tool_executions
     if recur_limit_exceeded:
         context_summary = await summarize_context(user_query, new_tool_executions, context_summary, True)
 
@@ -491,10 +490,10 @@ async def executor_node(
     update_load = {
         "task_execution_context": task_execution_context,
         "pending_step_response": pending_responses,
-        "current_successful_tools": current_successful_tools,
         "task_execution_count": state.get("task_execution_count", 0) + 1,
         "worker_exist_messages": worker_exist_messages,
         "recur_limit_exceeded": recur_limit_exceeded,
+        "cumulative_tool_call_cnt": state.get("cumulative_tool_call_cnt", 0) + tool_call_cnt,
     }
 
     return Command(

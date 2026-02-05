@@ -41,6 +41,8 @@ class AgentState(TypedDict):
     # Counts how many times we've retried (rollback).
     retry_count: int
 
+    tool_call_cnt: int
+
 
 success_tool_names = set()
 
@@ -157,14 +159,18 @@ class ReActAgent:
 
     def call_tools(self, state: AgentState):
         # Increment tool_steps on each visit to the tools node.
+        last_message = state["messages"][-1]
         current = state.get("tool_steps", 0)
-        retry_count = state.get("retry_count", 0)
+        tool_call_cnt = state.get("tool_call_cnt", 0)
         next_steps = current + 1
+        if isinstance(last_message, AIMessage) and hasattr(last_message, "tool_calls") and last_message.tool_calls:
+            tool_call_cnt += len(last_message.tool_calls)
+
         result = self.tool_node.invoke(state)
         # ToolNode returns a partial state update (typically containing "messages").
         if isinstance(result, dict):
             result["tool_steps"] = next_steps
-            result["retry_count"] = retry_count
+            result["tool_call_cnt"] = tool_call_cnt
         return result
 
     def enhance_tools(self, state: AgentState):
